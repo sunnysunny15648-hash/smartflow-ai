@@ -78,7 +78,7 @@ export const AIAssistantPage = () => {
         ...newHistory,
         {
           role: 'assistant',
-          content: 'I apologize, but I encountered an issue connecting with the AI engine. Please ensure your GEMINI_API_KEY is configured.',
+          content: 'I apologize, but I encountered an issue connecting with the AI engine. Please ensure your backend is reachable and GROQ_API_KEY is configured.',
         },
       ]);
     } finally {
