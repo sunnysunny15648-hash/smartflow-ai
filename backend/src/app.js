@@ -93,8 +93,10 @@ app.get('/', (req, res) => {
   });
 });
 
-// Mount Main API Routes
+// Mount Main API Routes with backward & forward compatible prefixes
 app.use('/api/v1', apiRoutes);
+app.use('/api', apiRoutes);
+app.use('/', apiRoutes);
 
 // Catch 404 routes
 app.use((req, res) => {
