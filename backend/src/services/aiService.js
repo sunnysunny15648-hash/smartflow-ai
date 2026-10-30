@@ -423,7 +423,20 @@ export const chatAssistant = async (message, conversationHistory = [], orgContex
       max_tokens: 1024,
     });
 
-    const reply = completion.choices[0]?.message?.content ?? 'Unable to generate a response. Please try again.';
+    let reply = completion.choices[0]?.message?.content ?? 'Unable to generate a response. Please try again.';
+
+    // If model wrapped response in JSON (e.g. {"message": "..."}), extract clean text
+    if (typeof reply === 'string' && reply.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(reply.trim());
+        if (parsed.message) reply = parsed.message;
+        else if (parsed.reply) reply = parsed.reply;
+        else if (parsed.content) reply = parsed.content;
+        else if (parsed.response) reply = parsed.response;
+      } catch (_) {
+        // Leave as is if not strictly JSON
+      }
+    }
 
     return {
       reply,
