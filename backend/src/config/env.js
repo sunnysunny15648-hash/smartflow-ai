@@ -18,7 +18,7 @@ const envSchema = z.object({
   SUPABASE_ANON_KEY: z.string().min(10),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(10),
   GROQ_API_KEY: z.string().default('placeholder'),
-  GROQ_MODEL: z.string().default('llama-3.3-70b-versatile'),
+  GROQ_MODEL: z.string().default('openai/gpt-oss-120b'),
   JWT_AUDIENCE: z.string().default('authenticated'),
 });
 
@@ -39,7 +39,7 @@ export const env = _env.success
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || 'placeholder',
       SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder',
       GROQ_API_KEY: process.env.GROQ_API_KEY || 'placeholder',
-      GROQ_MODEL: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+      GROQ_MODEL: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
       JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'authenticated',
     };
 

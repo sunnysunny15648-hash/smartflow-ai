@@ -67,12 +67,44 @@ const safeParseJSON = (text) => {
   }
 };
 
+const FALLBACK_MODELS = [
+  env.GROQ_MODEL,
+  'openai/gpt-oss-120b',
+  'openai/gpt-oss-20b',
+  'qwen/qwen3.8-27b',
+];
+
+/**
+ * Execute a Groq completion with graceful model fallback
+ */
+const executeWithFallback = async (client, params) => {
+  let lastErr = null;
+  const modelsToTry = Array.from(new Set(FALLBACK_MODELS.filter(Boolean)));
+
+  for (const model of modelsToTry) {
+    try {
+      return await client.chat.completions.create({
+        ...params,
+        model,
+      });
+    } catch (err) {
+      lastErr = err;
+      // If error is model not found / 404 / access error, try the next model
+      if (err.status === 404 || err.code === 'model_not_found' || err.message?.includes('does not exist')) {
+        logger.warn(`Model ${model} not available on Groq, trying fallback...`);
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastErr;
+};
+
 /**
  * Helper: single Groq chat completion call that always expects JSON back
  */
 const groqJSON = async (client, userPrompt) => {
-  const completion = await client.chat.completions.create({
-    model: env.GROQ_MODEL,
+  const completion = await executeWithFallback(client, {
     messages: [
       { role: 'system', content: SYSTEM_INSTRUCTION },
       { role: 'user', content: userPrompt },
@@ -385,8 +417,7 @@ export const chatAssistant = async (message, conversationHistory = [], orgContex
   ];
 
   try {
-    const completion = await client.chat.completions.create({
-      model: env.GROQ_MODEL,
+    const completion = await executeWithFallback(client, {
       messages,
       temperature: 0.5,
       max_tokens: 1024,

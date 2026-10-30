@@ -74,11 +74,15 @@ export const AIAssistantPage = () => {
         ]);
       }
     } catch (err) {
+      const errorMsg =
+        err.response?.data?.message ||
+        err.message ||
+        'I encountered an issue connecting with the AI engine. Please ensure your Groq configuration is active.';
       setMessages([
         ...newHistory,
         {
           role: 'assistant',
-          content: 'I apologize, but I encountered an issue connecting with the AI engine. Please ensure your backend is reachable and GROQ_API_KEY is configured.',
+          content: errorMsg,
         },
       ]);
     } finally {
