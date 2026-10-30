@@ -57,10 +57,11 @@ export const AIAssistantPage = () => {
     setLoading(true);
 
     try {
-      const res = await api.post('/ai/chat', {
-        message: textToSend,
-        conversationId,
-      });
+      const payload = { message: textToSend };
+      if (conversationId) {
+        payload.conversationId = conversationId;
+      }
+      const res = await api.post('/ai/chat', payload);
 
       if (res.success && res.data) {
         if (res.data.conversationId) setConversationId(res.data.conversationId);

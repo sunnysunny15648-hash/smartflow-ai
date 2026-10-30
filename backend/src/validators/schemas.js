@@ -155,8 +155,8 @@ export const AutomationRuleSchema = z.object({
 // ==============================================================================
 export const AIChatSchema = z.object({
   message: z.string().min(1, 'Message is required').max(3000),
-  conversationId: z.string().uuid().optional(),
-  context: z.record(z.any()).optional(),
+  conversationId: z.string().uuid().optional().nullable().or(z.literal('')),
+  context: z.record(z.any()).optional().nullable(),
 });
 
 export const AIWorkflowResponseSchema = z.object({
